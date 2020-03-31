@@ -44,5 +44,10 @@ namespace Catalog.API
                 endpoints.MapControllers();
             });
         }
+
+        public void Branch1()
+        {
+            Console.WriteLine("b1");
+        }
     }
 }
