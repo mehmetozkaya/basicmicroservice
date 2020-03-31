@@ -49,5 +49,11 @@ namespace Catalog.API
         {
             Console.WriteLine("b1 devam");
         }
+
+        public void Branch2()
+        {
+            Console.WriteLine("b2");
+        }
+
     }
 }
