@@ -1,14 +1,16 @@
-using Catalog.API.Data;
-using Catalog.API.Repositories;
-using Catalog.API.Repositories.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
-namespace Catalog.API
+namespace Order.API
 {
     public class Startup
     {
@@ -22,25 +24,6 @@ namespace Catalog.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            #region database services
-
-            //// use in-memory database
-            //services.AddDbContext<AspnetRunContext>(c =>
-            //    c.UseInMemoryDatabase("AspnetRunConnection"));
-
-            // add database dependecy
-            services.AddDbContext<CatalogContext>(c =>
-                c.UseSqlServer(Configuration.GetConnectionString("CatalogConnection")));
-
-            #endregion
-
-            #region project services
-
-            // add repository dependecy
-            services.AddScoped<IProductRepository, ProductRepository>();
-
-            #endregion
-
             services.AddControllers();
         }
 
