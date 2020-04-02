@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace Basket.API.Repositories
 {
+    // https://dotnetcorecentral.com/blog/redis-cache-in-net-core-docker-container/
+    // https://stackexchange.github.io/StackExchange.Redis/Configuration.html
     public class RedisBasketRepository : IBasketRepository
     {
         private readonly ILogger<RedisBasketRepository> _logger;
@@ -37,31 +39,7 @@ namespace Basket.API.Repositories
         }
 
         public async Task<CustomerBasket> GetBasketAsync(string customerId)
-        {
-            var customerBasket = new CustomerBasket();
-            customerBasket.BuyerId = "swn";
-            customerBasket.Items.Add(
-                new BasketItem
-                {
-                    Id = "1",
-                    ProductId = 2,
-                    OldUnitPrice = 3,
-                    PictureUrl = "asd",
-                    ProductName = "bas",
-                    Quantity = 3,
-                    UnitPrice = 4
-                }
-                );
-
-            var ser = JsonConvert.SerializeObject(customerBasket);
-
-            var created = _database.StringSet(customerBasket.BuyerId, ser);
-
-            var getResult = _database.StringGet(customerBasket.BuyerId);
-
-            var newObject = JsonConvert.DeserializeObject<CustomerBasket>(getResult);
-
-
+        {            
             var data = await _database.StringGetAsync(customerId);
 
             if (data.IsNullOrEmpty)
@@ -91,6 +69,27 @@ namespace Basket.API.Repositories
         {
             var endpoint = _redis.GetEndPoints();
             return _redis.GetServer(endpoint.First());
+
+
+            //var customerBasket = new CustomerBasket();
+            //customerBasket.BuyerId = "swn";
+            //customerBasket.Items.Add(
+            //    new BasketItem
+            //    {
+            //        Id = "1",
+            //        ProductId = 2,
+            //        OldUnitPrice = 3,
+            //        PictureUrl = "asd",
+            //        ProductName = "bas",
+            //        Quantity = 3,
+            //        UnitPrice = 4
+            //    }
+            //    );
+
+            //var ser = JsonConvert.SerializeObject(customerBasket);
+            //var created = _database.StringSet(customerBasket.BuyerId, ser);
+            //var getResult = _database.StringGet(customerBasket.BuyerId);
+            //var newObject = JsonConvert.DeserializeObject<CustomerBasket>(getResult);
         }
 
 
