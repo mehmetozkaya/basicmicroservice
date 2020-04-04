@@ -1,4 +1,5 @@
 ﻿using Basket.API.Entities;
+using Basket.API.RabbitMq;
 using Basket.API.Repositories.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -14,12 +15,13 @@ namespace Basket.API.Controllers
     public class BasketController : ControllerBase
     {
         private readonly IBasketRepository _repository;
-        //private readonly IEventBus _eventBus;
+        private readonly EventBusRabbitMQPublisher _eventBus;
         private readonly ILogger<BasketController> _logger;
 
-        public BasketController(IBasketRepository repository, ILogger<BasketController> logger)
+        public BasketController(IBasketRepository repository, EventBusRabbitMQPublisher eventBus, ILogger<BasketController> logger)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -62,6 +64,12 @@ namespace Basket.API.Controllers
             {
                 return BadRequest();
             }
+
+            basketCheckout.Buyer = basket.BuyerId;
+            basketCheckout.City = "asd";
+            basketCheckout.Country = "asd";
+
+            _eventBus.PublishBasketCheckout("basketCheckoutQueue", basketCheckout);
 
             //var userName = this.HttpContext.User.FindFirst(x => x.Type == ClaimTypes.Name).Value;
 

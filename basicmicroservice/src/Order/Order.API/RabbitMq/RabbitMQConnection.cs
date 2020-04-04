@@ -1,15 +1,14 @@
 ﻿using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
 using System;
 using System.IO;
 using System.Threading;
 
-namespace Basket.API.RabbitMq
+namespace Order.API.RabbitMq
 {
     public class RabbitMQConnection : IRabbitMQConnection
     {
-        private readonly IConnectionFactory _connectionFactory;        
+        private readonly IConnectionFactory _connectionFactory;
         private IConnection _connection;
         private bool _disposed;
 
@@ -33,12 +32,12 @@ namespace Basket.API.RabbitMq
         public bool TryConnect()
         {
             try
-            {                
+            {
                 _connection = _connectionFactory.CreateConnection();
             }
             catch (BrokerUnreachableException)
             {
-                Thread.Sleep(2000);                
+                Thread.Sleep(2000);
                 _connection = _connectionFactory.CreateConnection();
             }
 
@@ -61,7 +60,7 @@ namespace Basket.API.RabbitMq
                 throw new InvalidOperationException("No RabbitMQ connections are available to perform this action");
             }
             return _connection.CreateModel();
-        }            
+        }
 
         public void Dispose()
         {
@@ -77,6 +76,6 @@ namespace Basket.API.RabbitMq
             {
                 Console.WriteLine(ex.ToString());
             }
-        }               
+        }
     }
 }

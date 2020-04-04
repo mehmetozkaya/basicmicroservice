@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Basket.API.RabbitMq;
 using Basket.API.Repositories;
 using Basket.API.Repositories.Interface;
 using Microsoft.AspNetCore.Builder;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using RabbitMQ.Client;
 using StackExchange.Redis;
 
 namespace Basket.API
@@ -40,7 +42,29 @@ namespace Basket.API
             #region project services
 
             // add repository dependecy
-            services.AddScoped<IBasketRepository, RedisBasketRepository>();
+            services.AddScoped<IBasketRepository, RedisBasketRepository>();            
+
+            services.AddSingleton<IRabbitMQConnection>(sp =>
+            {
+                var factory = new ConnectionFactory()
+                {
+                    HostName = Configuration["EventBusHostName"]
+                };
+
+                if (!string.IsNullOrEmpty(Configuration["EventBusUserName"]))
+                {
+                    factory.UserName = Configuration["EventBusUserName"];
+                }
+
+                if (!string.IsNullOrEmpty(Configuration["EventBusPassword"]))
+                {
+                    factory.Password = Configuration["EventBusPassword"];
+                }
+
+                return new RabbitMQConnection(factory);
+            });
+            
+            services.AddSingleton<EventBusRabbitMQPublisher>();            
 
             #endregion
         }
