@@ -28,7 +28,7 @@ namespace Basket.API.RabbitMq
 
                 IBasicProperties properties = channel.CreateBasicProperties();
                 properties.Persistent = true;
-                properties.DeliveryMode = 2;                               
+                properties.DeliveryMode = 2;
 
                 channel.ConfirmSelect();
                 channel.BasicPublish(exchange: "", routingKey: queueName, mandatory: true, basicProperties: properties, body: body);

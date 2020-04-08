@@ -54,22 +54,25 @@ namespace Basket.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> CheckoutAsync([FromBody]BasketCheckout basketCheckout)
         {
+            // remove the basket 
+            // send checkout event to rabbitMq
+
             var userId = "swn"; // _identityService.GetUserIdentity();
-
-            basketCheckout.RequestId = Guid.NewGuid();
-
-            var basket = await _repository.GetBasketAsync(userId);
-
-            if (basket == null)
+                        
+            var basketRemoved = await _repository.DeleteBasketAsync(userId);
+            if (!basketRemoved)
             {
                 return BadRequest();
             }
 
-            basketCheckout.Buyer = basket.BuyerId;
+            basketCheckout.RequestId = Guid.NewGuid();
+            basketCheckout.Buyer = userId;
             basketCheckout.City = "asd";
             basketCheckout.Country = "asd";
 
             _eventBus.PublishBasketCheckout("basketCheckoutQueue", basketCheckout);
+
+            // TODO : burayı alttaki gibi yapılacak -- rabbitMQ kısmı ayrı bir class library yapılıp BasketCheckoutAcceptedIntegrationEvent class ı yapılıp 2 tarafta onu kullanacak
 
             //var userName = this.HttpContext.User.FindFirst(x => x.Type == ClaimTypes.Name).Value;
 

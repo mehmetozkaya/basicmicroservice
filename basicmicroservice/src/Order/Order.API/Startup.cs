@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Order.API.RabbitMq;
 using RabbitMQ.Client;
 
@@ -76,8 +70,7 @@ namespace Order.API
 
             //Initilize Rabbit Listener in ApplicationBuilderExtentions
             app.UseRabbitListener();
-        }
-        
+        }        
     }
 
     public static class ApplicationBuilderExtentions
@@ -88,10 +81,10 @@ namespace Order.API
         {
             Listener = app.ApplicationServices.GetService<EventBusRabbitMQConsumer>();
             var life = app.ApplicationServices.GetService<IHostApplicationLifetime>();
-            life.ApplicationStarted.Register(OnStarted);
 
-            ////press Ctrl+C to reproduce if your app runs in Kestrel as a console app
-            //life.ApplicationStopping.Register(OnStopping);
+            life.ApplicationStarted.Register(OnStarted);            
+            life.ApplicationStopping.Register(OnStopping);
+
             return app;
         }
 
@@ -100,9 +93,9 @@ namespace Order.API
             Listener.Consume();
         }
 
-        //private static void OnStopping()
-        //{
-        //    Listener.Disconnect();
-        //}
+        private static void OnStopping()
+        {
+            Listener.Disconnect();
+        }
     }
 }

@@ -7,8 +7,7 @@ using System.Text;
 namespace Order.API.RabbitMq
 {
     public class EventBusRabbitMQConsumer
-    {
-        const string BROKER_NAME = "aspnetrun_event_bus";
+    {        
         const string QUEUE_NAME = "basketCheckoutQueue";
 
         private readonly IRabbitMQConnection _connection;
@@ -40,6 +39,11 @@ namespace Order.API.RabbitMq
                 
                 // TODO : stuff
             }
+        }
+
+        public void Disconnect()
+        {
+            _connection.Dispose();
         }
     }
 
