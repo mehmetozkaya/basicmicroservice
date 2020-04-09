@@ -37,6 +37,11 @@ namespace Shipment.API
             services.AddSingleton<BookService>();
 
             services.AddControllers();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc(name: "v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "My API", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +51,12 @@ namespace Shipment.API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint(url: "/swagger/v1/swagger.json", name: "My API v1");
+            });
 
             app.UseRouting();
 
