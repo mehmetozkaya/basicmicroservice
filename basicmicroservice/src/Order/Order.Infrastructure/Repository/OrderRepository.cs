@@ -17,8 +17,9 @@ namespace Order.Infrastructure.Repository
         public async Task<IEnumerable<Order.Core.Entities.Order>> GetOrderListAsync()
         {            
             // second way
-            return await GetAllAsync();
+            return await GetAllAsync();            
         }
+
 
     }
 }
